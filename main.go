@@ -1,71 +1,38 @@
 package main
 
 import (
-	"bufio"
+	ascii "ascii/drawing"
 	"fmt"
-	"io"
 	"log"
 	"os"
+	"strings"
 )
 
 func main() {
-	file, err := os.Open("standard.txt")
-	if err != nil {
-		log.Fatal(err)
+	if len(os.Args) != 3 {
+		log.Fatal("Wrong number of arguments\nCorrect usage: go run . [STRING]")
 	}
-	defer file.Close()
-
-	r := bufio.NewReader(file)
-
-	var line []byte
-	var lines [][]byte
-	for i := 1; i <= 855; i++ {
-		line, err = r.ReadBytes('\n')
-		lines = append(lines, line)
-	}
-	var dictionary [][][]byte
-	var char [][]byte
-	count := 0
-	//i <= len(lines)-1
-	// fmt.Println(lines[0:9])
-	// fmt.Println(lines[847:855])
-
-	for i := 0; i <= len(lines)-1; i++ {
-		if len(lines[i]) == 1 {
-			continue
+	sourceText := os.Args[1]
+	bannerName := os.Args[2]
+	//fmt.Println(sourceText)
+	// fmt.Println(bannerName)
+	//ascii.Display(sourceText, bannerName)
+	//handle \n from string before calling drawing
+	var finalText string
+	//test := "hello\n\nthere"
+	sourceTextArr := strings.Split(sourceText, "\\n")
+	//fmt.Println(sourceTextArr)
+	for _, v := range sourceTextArr {
+		if len(v) != 0 {
+			res := ascii.Display(v, bannerName)
+			finalText += res
 		} else {
-			lines[i] = lines[i][:len(lines[i])-1]
-			//fmt.Println("this is lines after trim: \n", lines[i])
-			char = append(char, lines[i])
-			count++
-			if count == 8 {
-				// char = append(char, lines[i])
-				dictionary = append(dictionary, char)
-				char = [][]byte{}
-				count = 0
-			}
+			finalText += "\n"
 		}
 
 	}
-	//fmt.Println(dictionary)
-	//fmt.Printf("%q\n", dictionary)
-	//fmt.Println(char)
-	fmt.Println(dictionary[72])
-	test := "he"
-	fmt.Println(len(dictionary))
-	//var display [][][]byte
-	for _, e := range test {
-		char = dictionary[e-32]
-		fmt.Println(char)
-		// for i := 0; i < 8; i++ {
-		// 	display = append(display, dictionary[e-32])
-		// }
-	}
-	// for _, e := range display {
-	// 	fmt.Printf("%s\n", e)
-	// }
+	fmt.Print(finalText)
+	// regQuote1 := `/\\(\s)n`
+	// regQuote2 := `/\\n`
 
-	if err != io.EOF {
-		//log.Fatal(err)
-	}
 }
